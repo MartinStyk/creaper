@@ -5,6 +5,7 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.Property;
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,6 +164,12 @@ public final class Values {
         return new Values(newList);
     }
 
+    public Values and(String name, BigDecimal value) {
+        List<Property> newList = new ArrayList<Property>(namedValues);
+        newList.add(new Property(name, new ModelNode(value)));
+        return new Values(newList);
+    }
+
     public Values and(String name, ModelNode value) {
         List<Property> newList = new ArrayList<Property>(namedValues);
         newList.add(new Property(name, value));
@@ -185,6 +192,11 @@ public final class Values {
     }
 
     public Values andOptional(String name, String value) {
+        if (value == null) return this;
+        return and(name, value);
+    }
+
+    public Values andOptional(String name, BigDecimal value) {
         if (value == null) return this;
         return and(name, value);
     }

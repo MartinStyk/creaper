@@ -46,6 +46,67 @@ final class MessagingUtils {
 
         return selectedAddress;
     }
+ /**
+     * Finds an address of the messaging subsystem of a running server.
+     *
+     * @throws CommandFailedException when neither ActiveMQ nor HornetQ
+     * messaging subsystem exists
+     */
+    static Address subsystemAddress(OnlineManagementClient client) throws CommandFailedException {
+        Operations ops = new Operations(client);
+
+        Address hornetqAddress = Address.subsystem("messaging");
+        Address artemisAddress = Address.subsystem("messaging-activemq");
+        Address selectedAddress = null;
+
+        try {
+            if (ops.exists(artemisAddress)) {
+                selectedAddress = artemisAddress;
+            }
+        } catch (Exception ignored) {
+            // no resource definition found
+        }
+        try {
+            if (ops.exists(hornetqAddress)) {
+                selectedAddress = hornetqAddress;
+            }
+        } catch (Exception ignored) {
+            // no resource definition found
+        }
+
+        if (selectedAddress == null) {
+            throw new CommandFailedException("The messaging subsystem doesn't exist."
+                    + " Does the ActiveMQ or HornetQ messaging subsystem exist?");
+        }
+
+        return selectedAddress;
+    }
+
+    static boolean isActiveMqArtemis(OnlineManagementClient client) {
+        Operations ops = new Operations(client);
+        Address artemisAddress = Address.subsystem("messaging-activemq");
+        try {
+            if (ops.exists(artemisAddress)) {
+                return true;
+            }
+        } catch (Exception ignored) {
+            // no resource definition found
+        }
+        return false;
+    }
+
+    static boolean isHornetQ(OnlineManagementClient client) {
+        Operations ops = new Operations(client);
+        Address hornetqAddress = Address.subsystem("messaging");
+        try {
+            if (ops.exists(hornetqAddress)) {
+                return true;
+            }
+        } catch (Exception ignored) {
+            // no resource definition found
+        }
+        return false;
+    }
 
     static String getStringOfEntries(List<String> jndiEntries) {
         StringBuilder result = new StringBuilder();
