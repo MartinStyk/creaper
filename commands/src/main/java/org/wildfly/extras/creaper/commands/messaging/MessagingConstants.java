@@ -16,6 +16,7 @@ public final class MessagingConstants {
     public static final String REMOTE_CONNECTOR = "remote-connector";
     public static final String BROADCAST_GROUP = "broadcast-group";
     public static final String DISCOVERY_GROUP = "discovery-group";
+    public static final String CONNECTION_FACTORY = "connection-factory";
 
     private MessagingConstants() {
     } // avoid instantiation
