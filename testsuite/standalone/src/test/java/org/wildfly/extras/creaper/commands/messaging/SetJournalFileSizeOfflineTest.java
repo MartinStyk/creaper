@@ -60,6 +60,45 @@ public class SetJournalFileSizeOfflineTest {
             + "        </subsystem>"
             + "    </profile>\n"
             + "</server>";
+    private static final String SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ = ""
+            + "<server xmlns=\"urn:jboss:domain:1.7\">\n"
+            + "    <profile>\n"
+            + "         <subsystem xmlns=\"urn:jboss:domain:messaging-activemq:1.0\">\n"
+            + "            <server name=\"default\">\n"
+            + "                <jms-queue name=\"ExpiryQueue\" entries=\"java:/jms/queue/ExpiryQueue\"/>\n"
+            + "                <jms-queue name=\"DLQ\" entries=\"java:/jms/queue/DLQ\"/>\n"
+            + "                <connection-factory name=\"InVmConnectionFactory\" connectors=\"in-vm\" entries=\"java:/ConnectionFactory\"/>\n"
+            + "          <journal type=\"A\"/>"
+            + "            </server>\n"
+            + "        </subsystem>"
+            + "    </profile>\n"
+            + "</server>";
+    private static final String SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED = ""
+            + "<server xmlns=\"urn:jboss:domain:1.7\">\n"
+            + "    <profile>\n"
+            + "         <subsystem xmlns=\"urn:jboss:domain:messaging-activemq:1.0\">\n"
+            + "            <server name=\"default\">\n"
+            + "                <jms-queue name=\"ExpiryQueue\" entries=\"java:/jms/queue/ExpiryQueue\"/>\n"
+            + "                <jms-queue name=\"DLQ\" entries=\"java:/jms/queue/DLQ\"/>\n"
+            + "                <connection-factory name=\"InVmConnectionFactory\" connectors=\"in-vm\" entries=\"java:/ConnectionFactory\"/>\n"
+            + "          <journal type=\"A\" file-size=\"2\"/>"
+            + "            </server>\n"
+            + "        </subsystem>"
+            + "    </profile>\n"
+            + "</server>";
+    private static final String SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED2 = ""
+            + "<server xmlns=\"urn:jboss:domain:1.7\">\n"
+            + "    <profile>\n"
+            + "         <subsystem xmlns=\"urn:jboss:domain:messaging-activemq:1.0\">\n"
+            + "            <server name=\"default\">\n"
+            + "                <jms-queue name=\"ExpiryQueue\" entries=\"java:/jms/queue/ExpiryQueue\"/>\n"
+            + "                <jms-queue name=\"DLQ\" entries=\"java:/jms/queue/DLQ\"/>\n"
+            + "                <connection-factory name=\"InVmConnectionFactory\" connectors=\"in-vm\" entries=\"java:/ConnectionFactory\"/>\n"
+            + "          <journal type=\"A\" file-size=\"5\"/>"
+            + "            </server>\n"
+            + "        </subsystem>"
+            + "    </profile>\n"
+            + "</server>";
     private static final String SUBSYSTEM_ORIGINAL_HORNETQ = ""
             + "<server xmlns=\"urn:jboss:domain:1.7\">\n"
             + "    <profile>\n"
@@ -177,6 +216,36 @@ public class SetJournalFileSizeOfflineTest {
         client.apply(new SetJournalFileSize(2));
         System.out.println(Files.toString(cfg, Charsets.UTF_8));
         assertXmlIdentical(SUBSYTEM_SET2_HORNETQ, Files.toString(cfg, Charsets.UTF_8));
+    }
+
+    @Test
+    public void transformContainingTag() throws Exception {
+        File cfg = tmp.newFile("xmlTransform.xml");
+        Files.write(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ, cfg, Charsets.UTF_8);
+
+        OfflineManagementClient client = ManagementClient.offline(
+                OfflineOptions.standalone().configurationFile(cfg).build());
+
+        assertXmlIdentical(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ, Files.toString(cfg, Charsets.UTF_8));
+
+        client.apply(new SetJournalFileSize(2));
+        System.out.println(Files.toString(cfg, Charsets.UTF_8));
+        assertXmlIdentical(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED, Files.toString(cfg, Charsets.UTF_8));
+    }
+
+    @Test
+    public void transformContainingTag2() throws Exception {
+        File cfg = tmp.newFile("xmlTransform.xml");
+        Files.write(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED, cfg, Charsets.UTF_8);
+
+        OfflineManagementClient client = ManagementClient.offline(
+                OfflineOptions.standalone().configurationFile(cfg).build());
+
+        assertXmlIdentical(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED, Files.toString(cfg, Charsets.UTF_8));
+
+        client.apply(new SetJournalFileSize(5));
+        System.out.println(Files.toString(cfg, Charsets.UTF_8));
+        assertXmlIdentical(SUBSYTEM_CONTAINING_TYPE_ACTIVEMQ_EXPECTED2, Files.toString(cfg, Charsets.UTF_8));
     }
 
 }

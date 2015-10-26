@@ -51,7 +51,7 @@ public final class SetJournalFileSize implements OfflineCommand, OnlineCommand {
                 .of(SetJournalFileSize.class)
                 .subtree("messagingHornetq", Subtree.subsystem("messaging"))
                 .subtree("messagingActivemq", Subtree.subsystem("messaging-activemq"))
-                .parameter("journalFileSize", journalFileSize)
+                .parameter("journalFileSize", Long.valueOf(journalFileSize).toString())
                 .build();
         ctx.client.apply(enableSecurity);
     }

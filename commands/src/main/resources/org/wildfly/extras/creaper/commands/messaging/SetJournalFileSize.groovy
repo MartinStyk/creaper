@@ -6,7 +6,7 @@ def defArtemis = { 'journal' ('file-size': journalFileSize) }
 if (messagingActivemq) {
     address = messagingActivemq.server
     if ( address.journal.any { it.name() == 'journal' } ) {
-        address.journal.replaceNode defArtemis
+        address.journal.@'file-size' = journalFileSize
     } else {
         address.appendNode defArtemis
     }
