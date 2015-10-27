@@ -65,7 +65,7 @@ public class AddJmsBridgeOnlineTest {
         targetCtx.put("jboss.naming.client.connect.timeout", "3000");
 
         try {
-            client.apply(new AddJmsBridge.Builder(TEST_BRIDGE_NAME + "1")
+            client.apply(new AddJmsBridge.Builder(TEST_BRIDGE_NAME)
                     .sourceDestination("jms/queue/" + TEST_QUEUE_NAME)
                     .targetDestination("jms/queue/" + TEST_QUEUE_NAME_2)
                     .sourceConnectionFactory("java:/ConnectionFactory")
@@ -91,7 +91,7 @@ public class AddJmsBridgeOnlineTest {
         }
         ModelNodeResult result = ops.readAttribute(
                 MessagingUtils.subsystemAddress(client)
-                .and(MessagingConstants.JMS_BRIDGE, TEST_BRIDGE_NAME + "1"),
+                .and(MessagingConstants.JMS_BRIDGE, TEST_BRIDGE_NAME),
                 "client-id");
         result.assertSuccess();
     }

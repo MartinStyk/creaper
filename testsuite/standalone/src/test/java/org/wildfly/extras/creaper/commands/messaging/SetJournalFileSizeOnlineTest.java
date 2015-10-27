@@ -40,13 +40,13 @@ public class SetJournalFileSizeOnlineTest {
 
     @Test
     public void setTest() throws Exception {
-        set(10);
+        set(512 * 5);
     }
 
     @Test
     public void changeTest() throws Exception {
-        set(20);
-        set(30);
+        set(512 * 10);
+        set(512 * 12);
     }
 
     public void set(long size) throws Exception {

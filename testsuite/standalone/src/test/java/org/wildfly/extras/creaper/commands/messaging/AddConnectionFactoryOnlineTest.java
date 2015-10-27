@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.junit.After;
+import org.junit.experimental.categories.Category;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
+import org.wildfly.extras.creaper.test.AS7Tests;
 
 @RunWith(Arquillian.class)
+@Category(AS7Tests.class)
 public class AddConnectionFactoryOnlineTest {
 
     private static final String TEST_NAME = "testConnectionFactory";
@@ -39,9 +42,6 @@ public class AddConnectionFactoryOnlineTest {
     @After
     public void close() throws IOException, CliException, OperationException,
             CommandFailedException, InterruptedException, TimeoutException {
-        ops.removeIfExists(
-                MessagingUtils.address(client, MessagingUtils.DEFAULT_SERVER_NAME)
-                .and(MessagingConstants.CONNECTION_FACTORY, TEST_NAME));
         administration.reloadIfRequired();
         client.close();
     }

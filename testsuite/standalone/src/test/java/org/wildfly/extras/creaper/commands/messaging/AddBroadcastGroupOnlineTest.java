@@ -74,7 +74,7 @@ public class AddBroadcastGroupOnlineTest {
     @Test
     public void add2_commandSucceeds() throws CommandFailedException, IOException,
             InterruptedException, TimeoutException {
-        client.apply(new AddBroadcastGroup.Builder(TEST_NAME + "2")
+        client.apply(new AddBroadcastGroup.Builder(TEST_NAME)
                 .broadcastPeriod(100)
                 .jGroupsChannel("channel")
                 .jGroupsStack("stack")
@@ -84,7 +84,7 @@ public class AddBroadcastGroupOnlineTest {
 
         ModelNodeResult result = ops.readAttribute(
                 MessagingUtils.address(client, MessagingUtils.DEFAULT_SERVER_NAME)
-                .and(MessagingConstants.BROADCAST_GROUP, TEST_NAME + "2"),
+                .and(MessagingConstants.BROADCAST_GROUP, TEST_NAME),
                 "jgroups-stack");
         result.assertSuccess();
     }

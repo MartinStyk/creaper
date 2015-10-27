@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
+import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 @RunWith(Arquillian.class)
 public class AddCoreBridgeOnlineTest {
@@ -31,18 +33,22 @@ public class AddCoreBridgeOnlineTest {
 
     private OnlineManagementClient client;
     private Operations ops;
+    private Administration administration;
 
     @Before
     public void connect() throws IOException {
         client = ManagementClient.online(OnlineOptions.standalone().localDefault().build());
         ops = new Operations(client);
+        administration = new Administration(client);
     }
 
     @After
-    public void close() throws IOException, CliException, OperationException, CommandFailedException {
+    public void close() throws IOException, CliException, OperationException,
+            CommandFailedException, InterruptedException, TimeoutException {
         ops.removeIfExists(
                 MessagingUtils.address(client, MessagingUtils.DEFAULT_SERVER_NAME)
                 .and(MessagingConstants.CORE_BRIDGE, TEST_BRIDGE_NAME));
+        administration.reloadIfRequired();
         client.close();
     }
 
@@ -65,6 +71,7 @@ public class AddCoreBridgeOnlineTest {
                 MessagingUtils.address(client, MessagingUtils.DEFAULT_SERVER_NAME)
                 .and(MessagingConstants.CORE_BRIDGE, TEST_BRIDGE_NAME),
                 "retry-interval");
+
         result.assertSuccess();
     }
 
@@ -75,7 +82,7 @@ public class AddCoreBridgeOnlineTest {
         staticCons.add("connector1");
         staticCons.add("connector2");
 
-        client.apply(new AddCoreBridge.Builder(TEST_BRIDGE_NAME + "1")
+        client.apply(new AddCoreBridge.Builder(TEST_BRIDGE_NAME)
                 .queueName(TEST_QUEUE_NAME)
                 .forwardingAddress(TEST_QUEUE_NAME_2)
                 .retryInterval(RETRY_INT)
@@ -98,7 +105,7 @@ public class AddCoreBridgeOnlineTest {
 
         ModelNodeResult result = ops.readAttribute(
                 MessagingUtils.address(client, MessagingUtils.DEFAULT_SERVER_NAME)
-                .and(MessagingConstants.CORE_BRIDGE, TEST_BRIDGE_NAME + "1"),
+                .and(MessagingConstants.CORE_BRIDGE, TEST_BRIDGE_NAME),
                 "retry-interval");
         result.assertSuccess();
     }
